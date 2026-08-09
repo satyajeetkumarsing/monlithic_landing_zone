@@ -1,0 +1,35 @@
+name: Terraform Plan
+
+on:
+  push:
+    branches:
+      - feature
+
+jobs:
+  terraform-plan:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+        working-directory: ./environment/preprod
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./environment/preprod
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./environment/preprod
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./environment/preprod
