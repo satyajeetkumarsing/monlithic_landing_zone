@@ -1,0 +1,49 @@
+name: Terraform Plan
+
+on:
+  push:
+    branches:
+      - feature
+
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: aa07e026-bdae-4dd9-91cf-32286b25d39f
+          tenant-id: a74ff56f-f6ff-4a1f-94ed-cf0414dc012b
+          subscription-id: f82a3ae9-0294-4015-9aee-8f34bb4b3b1c
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+        working-directory: ./environment/preprod
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./environment/preprod
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./environment/preprod
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./environment/preprod
